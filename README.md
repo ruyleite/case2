@@ -27,19 +27,47 @@ Como a exportação dos dados do Google Analytics 360 para o Bigquery é Tabular
 
 ![](/BQ-Rows.png)
 
-Podemos usar essa tabela como uma rawdata e usar algum processo para transformar uma uma estrutura User-friendly.
+Para Datalake, uma unica tabela já suficiente.
+
+Podemos usar essa tabela como uma rawdata e usar algum processo para transformar uma estrutura mais User-friendly e ou ara uma estrutura de BI, dividido em assuntos.
+
+
 
 # Código
 1. Contagem de Pageviews;
+
+SELECT
+  hits.page.pagePath,
+  count(*) as pageviews
+FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*], unnest(hits) as hits 
+WHERE hits.type = "PAGE"
+GROUP BY 1
+ORDER BY 2 DESC
+
 2. Número de sessões por usuário;
+
+SELECT fullVisitorId, COUNT(totals.visits) AS visitCount
+FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*]
+GROUP BY fullVisitorId
+
 3. Sessões distintas por data;
 
 SELECT date, 
 SUM(totals.visits) AS sessions
-FROM [google.com:analytics-bigquery:dataset.ga_sessions_20121028]
+FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*]
 GROUP BY date
 
 4. Média de duração da sessão por data;
+
+SELECT date, COUNT(totals.bounces)/COUNT(totals.visits) AS bounceRate
+FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*]
+GROUP BY date
+
 5. Sessões diárias por tipo de browser;
+
+SELECT date, device.browser AS Browser,
+SUM(totals.visits) AS sessions
+FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*]
+GROUP BY date, device.browser
 
 # Exemplo em spark
