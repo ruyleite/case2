@@ -3,7 +3,7 @@
 2. Como Oracle não é "supportado", assume que esteja em um ambiente on-premisse com conecção por Interconnect ou algum serviço gerenciado de Oracla DB para GCP, ex "Accenture Managed Services for Oracle" encontrado no marketplace da GCP.
 
 # Arquitetura
-![](/arquitetura.png)
+![](/arquitetura_gcp.png)
 
 Temos 3 sources as seguintes carateristicas.
 1. SalesForce - realtime/near realtime, usando Streamin API
