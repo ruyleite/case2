@@ -29,37 +29,35 @@ Como a exportação dos dados do Google Analytics 360 para o Bigquery é Tabular
 
 Para Datalake, uma unica tabela já suficiente.
 
-Podemos usar essa tabela como uma rawdata e usar algum processo para transformar uma estrutura mais User-friendly e ou ara uma estrutura de BI, dividido em assuntos.
+Podemos usar essa tabela como uma rawdata e usar algum processo para transformar uma estrutura mais User-friendly e ou em uma estrutura de BI, dividido em dimensoes e fatos.
 
+![](/mer_simples.png)
 
 
 # Código
 1. Contagem de Pageviews;
 
 SELECT
-  hits.page.pagePath,
-  count(*) as pageviews
+  COUNT(*) as qtd_pageviews
 FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*], unnest(hits) as hits 
 WHERE hits.type = "PAGE"
-GROUP BY 1
-ORDER BY 2 DESC
 
 2. Número de sessões por usuário;
 
-SELECT fullVisitorId, COUNT(totals.visits) AS visitCount
+SELECT fullVisitorId, COUNT(totals.visits) AS Num_Sessoes
 FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*]
 GROUP BY fullVisitorId
 
 3. Sessões distintas por data;
 
 SELECT date, 
-SUM(totals.visits) AS sessions
+SUM(totals.visits) AS Sessoes
 FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*]
 GROUP BY date
 
 4. Média de duração da sessão por data;
 
-SELECT date, COUNT(totals.bounces)/COUNT(totals.visits) AS bounceRate
+SELECT date, SUM(totals.timeOnSite)/COUNT(totals.visits) AS Media_Duração
 FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*]
 GROUP BY date
 
@@ -70,4 +68,5 @@ SUM(totals.visits) AS sessions
 FROM [bigquery-public-data.google_analytics_sample.ga_sessions_*]
 GROUP BY date, device.browser
 
-# Exemplo em spark
+# Exemplo em spark.
+veja o arquivo bigquery.py
